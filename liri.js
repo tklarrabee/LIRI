@@ -12,7 +12,7 @@ var query = rawQuery.join(" ");
 
 switch (command) {
     case "movie-this":
-        if(!query){
+        if (!query) {
             query = "Mr. Nobody"
         }
 
@@ -21,8 +21,8 @@ switch (command) {
                 var movie = response.data;
                 var rtRating;
                 var rateList = movie.Ratings
-                rateList.forEach(function(rating){
-                    if(rating.Source === "Rotten Tomatoes"){
+                rateList.forEach(function (rating) {
+                    if (rating.Source === "Rotten Tomatoes") {
                         rtRating = rating.Value;
                     }
                 });
@@ -42,9 +42,9 @@ switch (command) {
 
     case "concert-this":
         axios.get("https://rest.bandsintown.com/artists/" + query + "/events?app_id=codingbootcamp").then(
-            function (response){
+            function (response) {
                 var events = response.data;
-                events.forEach(function(gig){
+                events.forEach(function (gig) {
                     var gigInfo = `
                     Venue: ${gig.venue.name}
                     Location: ${gig.venue.city}, ${gig.venue.country}
@@ -60,23 +60,56 @@ switch (command) {
         spotify.search({
             type: "track",
             query: query
-        }).then(function(response){
+        }).then(function (response) {
             var results = response.tracks.items
-            
-            results.forEach(function(item){
+
+            results.forEach(function (item) {
                 var artists = item.artists;
                 artistsData = [];
-                artists.forEach(function(artist){
-                    artistsData = [artist.name].join(" * ");
+                artists.forEach(function (artist) {
+                    artistsData = [artist.name];
                 })
                 console.log(`
                 Artist(s): ${artistsData}
                 Song: ${item.name}
                 Album: ${item.album.name}
-                Preview URL: ${item.preview_url ? item.preview_url : "preview not available" }
+                Preview URL: ${item.preview_url ? item.preview_url : "preview not available"}
                 `);
             });
         });
+
+        break;
+
+    case "do-what-it-says":
+        fs.readFile("./random.txt", "utf8", function (err, data) {
+            if (err) {
+                return console.log(err);
+            } else {
+                query = data;
+                spotify.search({
+                    type: "track",
+                    query: query
+                }).then(function (response) {
+                    var results = response.tracks.items
+        
+                    results.forEach(function (item) {
+                        var artists = item.artists;
+                        artistsData = [];
+                        artists.forEach(function (artist) {
+                            artistsData = [artist.name];
+                        })
+                        console.log(`
+                        Artist(s): ${artistsData}
+                        Song: ${item.name}
+                        Album: ${item.album.name}
+                        Preview URL: ${item.preview_url ? item.preview_url : "preview not available"}
+                        `);
+                    });
+                });
+            }
+        });
+        
+
         
         break;
     default:
@@ -84,7 +117,8 @@ switch (command) {
         LIRI Commands:
         concert-this "<artist/band name>"
         spotify-this-song "<song name>"
-        movie-this "<movie name>"`)
+        movie-this "<movie name>"
+        do-what-it-says`)
 }
 
 
