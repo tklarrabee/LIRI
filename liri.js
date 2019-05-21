@@ -16,7 +16,6 @@ switch (command) {
             query = "Mr. Nobody"
         }
 
-
         axios.get("http://www.omdbapi.com/?t=" + query + "&y=&plot=short&apikey=trilogy").then(
             function (response) {
                 var movie = response.data;
@@ -36,7 +35,7 @@ switch (command) {
                 Language: ${movie.Language}
                 Plot: ${movie.Plot}
                 Actors: ${movie.Actors}
-                `)
+                `);
             }
         );
         break;
@@ -55,6 +54,30 @@ switch (command) {
                 })
             }
         );
+        break;
+
+    case "spotify-this-song":
+        spotify.search({
+            type: "track",
+            query: query
+        }).then(function(response){
+            var results = response.tracks.items
+            
+            results.forEach(function(item){
+                var artists = item.artists;
+                artistsData = [];
+                artists.forEach(function(artist){
+                    artistsData = [artist.name].join(" * ");
+                })
+                console.log(`
+                Artist(s): ${artistsData}
+                Song: ${item.name}
+                Album: ${item.album.name}
+                Preview URL: ${item.preview_url ? item.preview_url : "preview not available" }
+                `);
+            });
+        });
+        
         break;
     default:
         console.log(`
