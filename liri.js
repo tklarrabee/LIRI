@@ -9,7 +9,7 @@ var command = process.argv[2];
 var rawQuery = process.argv.splice(3);
 var query = rawQuery.join(" ");
 
-switch(command) {
+switch (command) {
     case "movie-this":
         axios.get("http://www.omdbapi.com/?t=" + query + "&y=&plot=short&apikey=trilogy").then(
             function (response) {
@@ -18,6 +18,21 @@ switch(command) {
         );
         break;
 
+    case "concert-this":
+        axios.get("https://rest.bandsintown.com/artists/" + query + "/events?app_id=codingbootcamp").then(
+            function (response){
+                var events = response.data;
+                events.forEach(function(gig){
+                    var gigInfo = `
+                    Venue: ${gig.venue.name}
+                    Location: ${gig.venue.city}, ${gig.venue.country}
+                    Date: ${moment(evt.datetime).format('L')}
+                    `
+                    console.log(gigInfo)
+                })
+            }
+        );
+        break;
     default:
         console.log(`
         LIRI Commands:
@@ -30,5 +45,5 @@ switch(command) {
 
 /* concert-this for bands in town
 spotify-this-song for spotify api
-movie-this for 
+movie-this for
 do-what-it-says*/
